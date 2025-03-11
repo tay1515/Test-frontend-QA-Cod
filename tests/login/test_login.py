@@ -8,7 +8,7 @@ def test_shopping_cart(set_up_tear_down):
     credentials = {'username':'standard_user', 'password':'secret_sauce'}
     login_p = LoginPage(set_up_tear_down)
     products = login_p.do_login(credentials)
-    products.buy_items(2)
+    products.buy_items(0)
     expect(products.personal_information).to_be_visible(timeout=600)
     assert str(products.total_price_products_add) == str(products.validate_total_price_products), "error con los datos de compra"
     products.complete_purchase()
