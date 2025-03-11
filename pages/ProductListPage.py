@@ -1,6 +1,7 @@
 import random
 from datetime import time
 import time
+from idlelib import browser
 from threading import Thread
 import unittest
 
@@ -56,15 +57,18 @@ class ProductListPage:
     def search_product_id(self, quantity_products):
         list_select_product = []
         product_list = self._list_products2
-        print(product_list.all_inner_texts())
 
-        while True:
-            num_ramdon = random.randint(1, product_list.count())
-            item = product_list.all_inner_texts()[num_ramdon]
-            if item not in list_select_product:
-                list_select_product.append(item)
-                if len(list_select_product) == quantity_products:
-                    break
+        if quantity_products <= product_list.count():
+            while True:
+                num_ramdon = random.randint(0, product_list.count() - 1)
+                item = product_list.all_inner_texts()[num_ramdon]
+                if item not in list_select_product:
+                    list_select_product.append(item)
+                    if len(list_select_product) == quantity_products:
+                        break
+        else:
+            raise Exception("la cantidad de productos ingresada sobrepasa a la cantidad de produtos contenida en la pagina")
+
         print("List random: " + str(list_select_product))
 
         return list_select_product
@@ -145,7 +149,7 @@ class ProductListPage:
 
         time.sleep(3)
         # Valida el detalle de los productos seleccionados con el detalle de los productos del carrito de compras
-        assert str(self.detail_product) == str(self.detail_products_cart), "error no coicide el detalle de los productos agregados con los del carrito de compras"
+        assert str(self.detail_product) == str(self.detail_products_cart), "error no coincide el detalle de los productos agregados con los del carrito de compras"
 
         self._btn_checkout.click()
 
