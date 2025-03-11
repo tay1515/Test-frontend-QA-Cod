@@ -58,7 +58,7 @@ class ProductListPage:
         list_select_product = []
         product_list = self._list_products2
 
-        if quantity_products <= product_list.count():
+        if quantity_products <= product_list.count() & quantity_products != 0:
             while True:
                 num_ramdon = random.randint(0, product_list.count() - 1)
                 item = product_list.all_inner_texts()[num_ramdon]
