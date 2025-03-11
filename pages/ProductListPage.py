@@ -52,20 +52,6 @@ class ProductListPage:
     def click_continuo(self):
         self._btn_continue.click()
 
-    def search_product_id2(self, quantity_products):
-        list_select_product = []
-        product_list = self._list_products.count()
-        print(product_list)
-
-        while True:
-            num_ramdon = random.randint(1, product_list)
-            if num_ramdon not in list_select_product:
-                list_select_product.append(num_ramdon)
-                if len(list_select_product) == quantity_products:
-                    break
-        print("List random: " + str(list_select_product))
-
-        return list_select_product
 
     def search_product_id(self, quantity_products):
         list_select_product = []
@@ -74,12 +60,9 @@ class ProductListPage:
 
         while True:
             num_ramdon = random.randint(1, product_list.count())
-            print("rm::: " + str(num_ramdon))
             item = product_list.all_inner_texts()[num_ramdon]
-            print("item::: " + str(item))
             if item not in list_select_product:
                 list_select_product.append(item)
-                print("lenttt " + str(len(list_select_product)))
                 if len(list_select_product) == quantity_products:
                     break
         print("List random: " + str(list_select_product))
