@@ -1,5 +1,5 @@
 
-# proyecto frontend carrito de compras
+# Proyecto frontend carrito de compras
 
 Realizar flujo de compra en la pagina https://www.saucedemo.com/
 
