@@ -18,6 +18,7 @@ class ProductListPage:
         self.page = page
         self._products_header = page.locator("span.title")
         self._list_products = page.locator("//div[@class='inventory_item']//button")
+        self._list_products2 = page.locator("//div[@class='inventory_item_name ']")
         self._enter_shopping_cart = page.locator("//div[@id='shopping_cart_container']")
         self._icon_quantity_of_products_added = page.locator("//span[@class='shopping_cart_badge']")
         self._btn_checkout = page.locator("//button[@id='checkout']")
@@ -51,7 +52,7 @@ class ProductListPage:
     def click_continuo(self):
         self._btn_continue.click()
 
-    def search_product_id(self, quantity_products):
+    def search_product_id2(self, quantity_products):
         list_select_product = []
         product_list = self._list_products.count()
         print(product_list)
@@ -60,6 +61,25 @@ class ProductListPage:
             num_ramdon = random.randint(1, product_list)
             if num_ramdon not in list_select_product:
                 list_select_product.append(num_ramdon)
+                if len(list_select_product) == quantity_products:
+                    break
+        print("List random: " + str(list_select_product))
+
+        return list_select_product
+
+    def search_product_id(self, quantity_products):
+        list_select_product = []
+        product_list = self._list_products2
+        print(product_list.all_inner_texts())
+
+        while True:
+            num_ramdon = random.randint(1, product_list.count())
+            print("rm::: " + str(num_ramdon))
+            item = product_list.all_inner_texts()[num_ramdon]
+            print("item::: " + str(item))
+            if item not in list_select_product:
+                list_select_product.append(item)
+                print("lenttt " + str(len(list_select_product)))
                 if len(list_select_product) == quantity_products:
                     break
         print("List random: " + str(list_select_product))
@@ -75,31 +95,28 @@ class ProductListPage:
 
         self.detail_product = []
         name_products = []
-        for product_id in search_product_id:
-            print("Product id: " + str(product_id))
-            product_name = self.page.locator(
-                f"(//div[@class='inventory_list']//div[@class='inventory_item']//div[@class='inventory_item_name '])[{product_id}]")
-           # product_detail = self.page.locator(
-           #     f"(//div[@class='inventory_list']//div[@class='inventory_item']//div[@class='inventory_item_desc'])[{product_id}]")
+        for product_name in search_product_id:
+            print("Product id: " + str(product_name))
+            product_detail = self.page.locator(
+                f"//div[@class='inventory_item_name ' and text()='{product_name}']/ancestor::div[@class='inventory_item']//div[@class='inventory_item_desc']")
             product_price = self.page.locator(
-                f"(//div[@class='inventory_list']//div[@class='inventory_item']//div[@class='inventory_item_price'])[{product_id}]")
-
+                f"//div[@class='inventory_item_name ' and text()='{product_name}']/ancestor::div[@class='inventory_item']//div[@class='inventory_item_price']")
             time.sleep(3)
-            #print(
-            #    "Product name: " + product_name.inner_text() + " \nProduct detail: " + product_detail.inner_text() + " \nProduct price: " + product_price.inner_text())
-            self.detail_product.append(product_name.inner_text())
-            #self.detail_product.append(product_detail.inner_text())
+            print(
+                "Product name: " + str(name_products) + " \nProduct detail: " + product_detail.inner_text() + " \nProduct price: " + product_price.inner_text())
+            self.detail_product.append(product_name)
+            self.detail_product.append(product_detail.inner_text())
             self.detail_product.append(product_price.inner_text())
 
             # con este nombre se realizara la busqueda de cada producto en el apartado del carrito de compras
-            name_products.append(product_name.inner_text())
+            name_products.append(product_name)
 
             time.sleep(4)
             # hacer scroll hasta el boton de agregar y agregar producto
             self.page.locator(
-                f"(//button[@class='btn btn_primary btn_small btn_inventory '])[{product_id}]").scroll_into_view_if_needed()
+                f"//div[@class='inventory_item_name ' and text()='{product_name}']/ancestor::div[@class='inventory_item']//button").scroll_into_view_if_needed()
             self.page.locator(
-                f"(//button[@class='btn btn_primary btn_small btn_inventory '])[{product_id}]").click()
+                f"//div[@class='inventory_item_name ' and text()='{product_name}']/ancestor::div[@class='inventory_item']//button").click()
 
             price_format = (product_price.inner_text()).replace("$", "")
             self.total_price_products += float(price_format)
@@ -118,31 +135,30 @@ class ProductListPage:
         return name_products
 
 
-    def buy_items(self):
+    def buy_items(self, quantity_products):
 
-        name_products = self.choose_products_to_buy(2)
+        name_products = self.choose_products_to_buy(quantity_products)
         time.sleep(4)
         # recorreto todos los productos del carrito de compras y los almacena en una lista con su respectivo detalle
         self.detail_products_cart = []
         for item in name_products:
             print("Name: " + str(item))
             product_name_cart = self.page.locator(
-                f"//div[@class='inventory_item_name' and contains(.,'{item.strip()}')]/ancestor::div[@class='cart_item_label']//div[@class='inventory_item_name']")
-            time.sleep(4)
-            self.detail_products_cart.append(product_name_cart.inner_text())
-           # product_descrip_cart = self.page.locator(
-           #     f"//div[@class='inventory_item_name' and contains(.,'{item.strip()}')]/ancestor::div[@class='cart_item_label']//div[@class='inventory_item_desc']")
-           # time.sleep(4)
+                f"//div[@class='inventory_item_name' and text()='{item.strip()}']/ancestor::div[@class='cart_item_label']//div[@class='inventory_item_name']")
+            product_descrip_cart = self.page.locator(
+                 f"//div[@class='inventory_item_name' and text()='{item.strip()}']/ancestor::div[@class='cart_item_label']//div[@class='inventory_item_desc']")
             product_price_cart = self.page.locator(
-                f"//div[@class='inventory_item_name' and contains(.,'{item.strip()}')]/ancestor::div[@class='cart_item_label']//div[@class='inventory_item_price']")
-            time.sleep(5)
-            #self.detail_products_cart.append(product_descrip_cart.inner_text())
+                f"//div[@class='inventory_item_name' and text()='{item.strip()}']/ancestor::div[@class='cart_item_label']//div[@class='inventory_item_price']")
+            time.sleep(3)
+
+            self.detail_products_cart.append(product_name_cart.inner_text())
+            self.detail_products_cart.append(product_descrip_cart.inner_text())
             self.detail_products_cart.append(product_price_cart.inner_text())
             #self.page.wait_for_timeout(1200)
-            time.sleep(5)
+            time.sleep(3)
 
-        #print("Detail products:::: " + str(self.detail_product))
-        #print("Detail products cart: " + str(self.detail_products_cart))
+        print("Detail products:::: " + str(self.detail_product))
+        print("Detail products cart: " + str(self.detail_products_cart))
 
         time.sleep(3)
         # Valida el detalle de los productos seleccionados con el detalle de los productos del carrito de compras
