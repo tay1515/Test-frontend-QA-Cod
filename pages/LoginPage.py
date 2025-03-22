@@ -1,4 +1,6 @@
+from controller.ShoppingCartController import ShoppingCartController
 from pages.ProductListPage import ProductListPage
+
 
 class LoginPage:
 
@@ -22,8 +24,10 @@ class LoginPage:
     def click_login(self):
         self._login_btn.click()
 
-    def do_login(self, credentials):
-        self.enter_username(credentials['username'])
-        self.enter_password(credentials['password'])
+    def do_login(self, username, password):
+        # self.enter_username(credentials['username'])
+        # self.enter_password(credentials['password'])
+        self.enter_username(username)
+        self.enter_password(password)
         self.click_login()
-        return ProductListPage(self.page)
+        return ShoppingCartController(self.page)
